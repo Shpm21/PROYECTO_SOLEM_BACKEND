@@ -1,7 +1,10 @@
 from flask_restful import Resource, request
 import base64
 from app.logic.Detector import Detector
-images = []
+try:
+    from PIL import Image
+except ImportError:
+    import Image
 
 
 def get_encode_from_metadata(metadata):
@@ -16,7 +19,7 @@ def save_image_to_disk(image):
     return image_64_decode
 
 
-class Image(Resource):
+class ImageEndPoint(Resource):
     def get(self):
         return {'image': 'image'}
 
@@ -27,7 +30,8 @@ class Image(Resource):
         image_64_decode = save_image_to_disk(
             real_image)  # save the image to disk
         # aca debe ir el llamado al algoritmo que detecta letras en la imagen
-        letters = Detector.getInstance().detect('./deer_decode.jpg')
-        images.append(image)  # append the image to the list
+        img = Image.open('./deer_decode.jpg')
+        img = img.convert('L')  # convert to grey scale
+        letters = Detector.getInstance().detect(img)
         # return the letters
         return {'letters': letters}
