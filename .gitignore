@@ -1,3 +1,6 @@
 /deer_decode.jpg
+/deer_decode_grey.jpg
+/deer_decode_grey_equalize.jpg
+/deer_decode_grey_equalize_binarize.jpg
 /venv
 /__pycache__
