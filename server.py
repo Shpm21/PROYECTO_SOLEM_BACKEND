@@ -1,23 +1,36 @@
 from flask import Flask, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import sys
 # THIS IS NEEDED TO IMPORT "processRequestImage" WHICH IS STORED IN ANOTHER DIRECTORY
 sys.path.append('./cvf')
-from imageProcessing import processRequestImage
+from imageProcessing import getTextFromSampleImage, getTextFromImageBytes
 
+# getTextFromSampleImage()
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route("/", methods=['POST', 'GET'])
-def hello_world():
-    return "<p>holaMundo</p>"
+@app.route("/", methods=['GET'])
+@cross_origin()
+def httpGetTextFromSampleImage():
+    return getTextFromSampleImage()
+    # import io
+    # import requests
+    # from PIL import Image
+    # r = requests.get('https://www.bimbaylola.com/media/catalog/product/1/8/182BAC104_T2200_P_T_XX_1.jpg', stream=True)
+    # print(r)
+    # print(type(r))
+    # return "chaoooooooooooooooo"
 
 
 @app.route("/images", methods=['POST'])
+@cross_origin()
 def httpImagesRepo():
+    
     if (request.files):
-        imagefile = request.files.get('imagefile', '')
-        return processRequestImage(imagefile)
+        imagefile = request.files['imagefile']
+        imgBytes = imagefile.stream.read()
+        return getTextFromImageBytes(imgBytes)
     else:
         return "Por favor, envía una imagen"
 
